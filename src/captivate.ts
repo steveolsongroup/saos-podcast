@@ -223,7 +223,10 @@ export function getEpisodeOverview(
  * response object and returns the first numeric value found under any of the
  * given candidate keys (case-insensitive), at any depth. Returns 0 if none.
  */
-export function extractDownloads(payload: any, keys = ["downloads", "total", "count", "plays"]): number {
+export function extractDownloads(
+  payload: any,
+  keys = ["hits", "downloads", "total", "count", "plays"],
+): number {
   const wanted = new Set(keys.map((k) => k.toLowerCase()));
   let found: number | undefined;
 

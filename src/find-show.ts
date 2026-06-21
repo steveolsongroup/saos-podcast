@@ -5,6 +5,7 @@
  *   npm run show-id
  */
 
+import "dotenv/config";
 import { authenticate, getUserShows } from "./captivate.js";
 
 async function main(): Promise<void> {
