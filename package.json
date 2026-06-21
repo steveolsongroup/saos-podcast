@@ -11,6 +11,7 @@
     "publish": "tsx src/publish.ts",
     "sync-stats": "tsx src/sync-stats.ts",
     "import": "tsx src/import-episodes.ts",
+    "fix-shownotes": "tsx src/fix-shownotes.ts",
     "show-id": "tsx src/find-show.ts",
     "typecheck": "tsc --noEmit"
   },

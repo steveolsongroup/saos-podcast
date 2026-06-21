@@ -14,6 +14,7 @@ import {
   extractDownloads,
 } from "./captivate.js";
 import { notion, getPublishedEpisodes, PROP, STATUS } from "./notion.js";
+import { htmlToBlocks } from "./html-to-blocks.js";
 
 /** Captivate episode_type -> our select option. */
 function mapType(t?: string): string {
@@ -36,23 +37,6 @@ function isExplicit(v: unknown): boolean {
   if (typeof v === "boolean") return v;
   const s = String(v ?? "").toLowerCase();
   return s === "true" || s === "yes" || s === "explicit" || s === "1";
-}
-
-/** Strip HTML to plain text for the Summary fallback. */
-function stripHtml(html?: string): string {
-  if (!html) return "";
-  return html
-    .replace(/<br\s*\/?>/gi, "\n")
-    .replace(/<\/p>/gi, "\n")
-    .replace(/<[^>]+>/g, "")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&#39;|&rsquo;|&lsquo;/g, "'")
-    .replace(/&quot;|&ldquo;|&rdquo;/g, '"')
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
 }
 
 const text = (s: string) => ({ rich_text: [{ text: { content: s.slice(0, 2000) } }] });
@@ -96,7 +80,8 @@ async function main(): Promise<void> {
       /* leave 0 */
     }
 
-    const summary = (ep.summary && String(ep.summary).trim()) || stripHtml(ep.shownotes);
+    // Captivate's real `summary` field only (the description goes in the body).
+    const summary = ep.summary ? String(ep.summary).trim() : "";
 
     const properties: Record<string, any> = {
       [PROP.title]: { title: [{ text: { content: title } }] },
@@ -116,9 +101,18 @@ async function main(): Promise<void> {
     if (summary) properties[PROP.summary] = text(summary);
     if (ep.link) properties[PROP.episodeUrl] = { url: String(ep.link) };
 
-    await notion.pages.create({ parent: { database_id: env.podcastDb() }, properties });
+    // Description -> page body as real Notion blocks.
+    const blocks = htmlToBlocks(String(ep.shownotes ?? ""));
+    const page: any = await notion.pages.create({
+      parent: { database_id: env.podcastDb() },
+      properties,
+      ...(blocks.length ? { children: blocks.slice(0, 100) } : {}),
+    });
+    for (let i = 100; i < blocks.length; i += 100) {
+      await notion.blocks.children.append({ block_id: page.id, children: blocks.slice(i, i + 100) });
+    }
     created++;
-    console.log(`  ✓ imported: ${title}  (downloads: ${total})`);
+    console.log(`  ✓ imported: ${title}  (downloads: ${total}, ${blocks.length} body block(s))`);
   }
 
   console.log(`\nDone. Imported ${created}, skipped ${skipped}.`);

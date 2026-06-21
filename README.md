@@ -56,10 +56,16 @@ Open the **Podcast Stats** DB → add a **Chart** view → X axis = `Date`, Y ax
 ## Run locally
 
 ```bash
-npm run publish      # publish any episodes marked "Ready to Publish"
-npm run sync-stats   # pull download stats into Notion
-npm run typecheck    # tsc --noEmit
+npm run publish        # publish any episodes marked "Ready to Publish"
+npm run sync-stats     # pull download stats into Notion
+npm run import         # one-time: backfill existing Captivate episodes into Notion (idempotent)
+npm run fix-shownotes  # one-time: move imported descriptions into the page body (idempotent)
+npm run typecheck      # tsc --noEmit
 ```
+
+Episode descriptions live in the **page body** (real Notion blocks), matching the publish
+direction (body → Captivate `shownotes`). The **Summary** property maps to Captivate's separate
+short `summary`/subtitle field.
 
 ## Deploy (GitHub Actions)
 
