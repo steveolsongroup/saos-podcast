@@ -1,0 +1,32 @@
+name: Publish episodes to Captivate
+
+on:
+  schedule:
+    # Every 15 minutes. GitHub may delay scheduled runs under load.
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {} # manual "Run workflow" button
+
+# Avoid overlapping runs publishing the same episode twice.
+concurrency:
+  group: podcast-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run publish
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_PODCAST_DB: ${{ secrets.NOTION_PODCAST_DB }}
+          NOTION_PODCAST_STATS_DB: ${{ secrets.NOTION_PODCAST_STATS_DB }}
+          CAPTIVATE_USER_ID: ${{ secrets.CAPTIVATE_USER_ID }}
+          CAPTIVATE_API_KEY: ${{ secrets.CAPTIVATE_API_KEY }}
+          CAPTIVATE_SHOW_ID: ${{ secrets.CAPTIVATE_SHOW_ID }}

@@ -1,0 +1,25 @@
+{
+  "name": "podcast-notion-captivate",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Manage a Captivate.fm podcast from Notion: publish episodes and sync analytics back to a Notion dashboard.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "publish": "tsx src/publish.ts",
+    "sync-stats": "tsx src/sync-stats.ts",
+    "show-id": "tsx src/find-show.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@notionhq/client": "^2.2.15",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsx": "^4.19.2",
+    "typescript": "^5"
+  }
+}
