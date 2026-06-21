@@ -10,6 +10,7 @@
   "scripts": {
     "publish": "tsx src/publish.ts",
     "sync-stats": "tsx src/sync-stats.ts",
+    "import": "tsx src/import-episodes.ts",
     "show-id": "tsx src/find-show.ts",
     "typecheck": "tsc --noEmit"
   },

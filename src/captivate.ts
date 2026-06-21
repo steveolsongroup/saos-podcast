@@ -73,6 +73,16 @@ export async function getUserShows(token: string, userId: string): Promise<any[]
   return data?.shows ?? data?.show ?? [];
 }
 
+/** List all episodes for a show (published + scheduled + draft). */
+export async function getShowEpisodes(token: string, showId: string): Promise<any[]> {
+  const res = await fetch(`${API_URL}/shows/${showId}/episodes`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error(`Captivate getShowEpisodes failed: ${res.status} ${await res.text()}`);
+  const data: any = await res.json();
+  return data?.episodes ?? data?.episode ?? [];
+}
+
 /**
  * Upload audio bytes to a show's media library.
  * Returns the media id to attach to an episode.
