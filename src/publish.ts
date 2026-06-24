@@ -76,7 +76,8 @@ async function publishOne(token: string, ep: EpisodeRow): Promise<void> {
     shownotes: shownotes || ep.summary || "",
     summary: ep.summary || undefined,
     explicit: ep.explicit,
-    episode_type: ep.episodeType || "Full",
+    episode_type: (ep.episodeType || "Full").toLowerCase(), // Captivate requires full|bonus|trailer
+
     episode_number: ep.episodeNumber,
     episode_season: ep.season,
   };
