@@ -26,12 +26,20 @@ import {
 } from "./notion.js";
 import { pageToShowNotesHtml } from "./shownotes.js";
 
-/** Notion date -> Captivate "YYYY-MM-DD HH:MM:SS" (UTC). */
+/**
+ * Notion date -> Captivate "YYYY-MM-DD HH:MM:SS".
+ *
+ * Captivate interprets this naive timestamp in the SHOW's timezone, so we must
+ * send the wall-clock time the user typed in Notion — NOT a UTC conversion.
+ * Converting to UTC shifts evening times to the next calendar day.
+ */
 function formatCaptivateDate(iso?: string): string | undefined {
   if (!iso) return undefined;
-  const d = new Date(iso.length <= 10 ? `${iso}T09:00:00Z` : iso);
-  if (Number.isNaN(d.getTime())) return undefined;
-  return d.toISOString().slice(0, 19).replace("T", " ");
+  if (iso.length <= 10) return `${iso} 09:00:00`; // date with no time
+  // Take the local wall-clock portion before any offset/Z (e.g. "...T20:35:00-07:00").
+  const m = iso.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})(:\d{2})?/);
+  if (m) return `${m[1]} ${m[2]}${m[3] ?? ":00"}`;
+  return undefined;
 }
 
 function isFuture(iso?: string): boolean {
