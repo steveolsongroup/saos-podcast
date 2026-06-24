@@ -83,7 +83,12 @@ async function publishOne(token: string, ep: EpisodeRow): Promise<void> {
 
   console.log(`  creating episode (${fields.status})...`);
   const created = await createEpisode(token, fields);
-  await markPublished(ep.id, { episodeId: created.id, mediaId, url: created.url });
+  await markPublished(ep.id, {
+    episodeId: created.id,
+    mediaId,
+    url: created.url,
+    mp3Url: created.mediaUrl,
+  });
   console.log(`  ✓ published — episode id ${created.id}${created.url ? ` (${created.url})` : ""}`);
 }
 

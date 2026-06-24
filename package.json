@@ -13,6 +13,7 @@
     "import": "tsx src/import-episodes.ts",
     "fix-shownotes": "tsx src/fix-shownotes.ts",
     "backfill-player-url": "tsx src/backfill-player-url.ts",
+    "backfill-audio-url": "tsx src/backfill-audio-url.ts",
     "show-id": "tsx src/find-show.ts",
     "typecheck": "tsc --noEmit"
   },

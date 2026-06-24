@@ -141,6 +141,8 @@ export interface CreatedEpisode {
   id: string;
   /** Public episode URL if Captivate returned one. */
   url?: string;
+  /** Direct MP3 URL if Captivate returned one. */
+  mediaUrl?: string;
   raw: any;
 }
 
@@ -161,7 +163,13 @@ export async function createEpisode(token: string, fields: EpisodeFields): Promi
     throw new Error(`Captivate createEpisode returned no id: ${JSON.stringify(data).slice(0, 300)}`);
   }
   const url = ep?.episodes_url ?? ep?.url ?? ep?.link ?? ep?.share_url;
-  return { id: String(id), url: url ? String(url) : undefined, raw: data };
+  const mediaUrl = ep?.media_url;
+  return {
+    id: String(id),
+    url: url ? String(url) : undefined,
+    mediaUrl: mediaUrl ? String(mediaUrl) : undefined,
+    raw: data,
+  };
 }
 
 /** Update an existing episode (used for idempotent retries). */
@@ -181,7 +189,13 @@ export async function updateEpisode(
   const data: any = await res.json();
   const ep = data?.episode ?? data;
   const url = ep?.episodes_url ?? ep?.url ?? ep?.link ?? ep?.share_url;
-  return { id: episodeId, url: url ? String(url) : undefined, raw: data };
+  const mediaUrl = ep?.media_url;
+  return {
+    id: episodeId,
+    url: url ? String(url) : undefined,
+    mediaUrl: mediaUrl ? String(mediaUrl) : undefined,
+    raw: data,
+  };
 }
 
 // ---------------------------------------------------------------------------

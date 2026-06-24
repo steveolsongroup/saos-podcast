@@ -101,6 +101,7 @@ async function main(): Promise<void> {
       properties[PROP.season] = num(ep.episode_season);
     if (summary) properties[PROP.summary] = text(summary);
     if (ep.link) properties[PROP.episodeUrl] = { url: String(ep.link) };
+    if (ep.media_url) properties[PROP.mp3Url] = { url: String(ep.media_url) };
 
     // Description -> page body as real Notion blocks.
     const blocks = htmlToBlocks(String(ep.shownotes ?? ""));

@@ -26,6 +26,7 @@ export const PROP = {
   captivateMediaId: "Captivate Media ID",
   episodeUrl: "Episode URL",
   playerUrl: "Player URL",
+  mp3Url: "MP3 URL",
   error: "Error",
   downloadsTotal: "Downloads (Total)",
   downloads30d: "Downloads (30d)",
@@ -154,7 +155,7 @@ export async function saveMediaId(pageId: string, mediaId: string): Promise<void
 
 export async function markPublished(
   pageId: string,
-  opts: { episodeId: string; mediaId: string; url?: string },
+  opts: { episodeId: string; mediaId: string; url?: string; mp3Url?: string },
 ): Promise<void> {
   const properties: Record<string, any> = {
     [PROP.status]: { select: { name: STATUS.published } },
@@ -164,6 +165,7 @@ export async function markPublished(
     [PROP.error]: { rich_text: [] },
   };
   if (opts.url) properties[PROP.episodeUrl] = { url: opts.url };
+  if (opts.mp3Url) properties[PROP.mp3Url] = { url: opts.mp3Url };
   await notion.pages.update({ page_id: pageId, properties });
 }
 
