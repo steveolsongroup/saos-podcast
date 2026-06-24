@@ -13,7 +13,7 @@ import {
   getEpisodeTotal,
   extractDownloads,
 } from "./captivate.js";
-import { notion, getPublishedEpisodes, PROP, STATUS } from "./notion.js";
+import { notion, getPublishedEpisodes, captivatePlayerUrl, PROP, STATUS } from "./notion.js";
 import { htmlToBlocks } from "./html-to-blocks.js";
 
 /** Captivate episode_type -> our select option. */
@@ -90,6 +90,7 @@ async function main(): Promise<void> {
       [PROP.explicit]: { checkbox: isExplicit(ep.explicit) },
       [PROP.captivateEpisodeId]: text(id),
       [PROP.captivateMediaId]: text(String(ep.media_id ?? "")),
+      [PROP.playerUrl]: { url: captivatePlayerUrl(id) },
       [PROP.downloadsTotal]: num(total),
       [PROP.lastSynced]: { date: { start: today } },
     };

@@ -25,6 +25,7 @@ export const PROP = {
   captivateEpisodeId: "Captivate Episode ID",
   captivateMediaId: "Captivate Media ID",
   episodeUrl: "Episode URL",
+  playerUrl: "Player URL",
   error: "Error",
   downloadsTotal: "Downloads (Total)",
   downloads30d: "Downloads (30d)",
@@ -47,6 +48,10 @@ export const STATUS = {
   published: "Published",
   error: "Error",
 } as const;
+
+/** Captivate's embeddable player URL for an episode (deterministic from its id). */
+export const captivatePlayerUrl = (episodeId: string): string =>
+  `https://player.captivate.fm/episode/${episodeId}/`;
 
 export interface EpisodeRow {
   id: string;
@@ -155,6 +160,7 @@ export async function markPublished(
     [PROP.status]: { select: { name: STATUS.published } },
     [PROP.captivateEpisodeId]: textProp(opts.episodeId),
     [PROP.captivateMediaId]: textProp(opts.mediaId),
+    [PROP.playerUrl]: { url: captivatePlayerUrl(opts.episodeId) },
     [PROP.error]: { rich_text: [] },
   };
   if (opts.url) properties[PROP.episodeUrl] = { url: opts.url };
